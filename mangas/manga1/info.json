@@ -1,0 +1,15 @@
+{
+"chapters":[
+
+{
+"title":"Capítulo 1",
+"file":"cap1.json"
+},
+
+{
+"title":"Capítulo 2",
+"file":"cap2.json"
+}
+
+]
+}

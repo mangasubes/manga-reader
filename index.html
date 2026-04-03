@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>Biblioteca Manga</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#111;
+color:white;
+}
+
+.header{
+background:#000;
+padding:15px;
+font-size:22px;
+border-bottom:2px solid #333;
+}
+
+.search{
+width:100%;
+padding:10px;
+border:none;
+background:#222;
+color:white;
+}
+
+.manga{
+padding:14px;
+border-bottom:1px solid #333;
+cursor:pointer;
+}
+
+.manga:hover{
+background:#222;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+📚 Biblioteca de Proyectos
+</div>
+
+<input
+class="search"
+id="searchBox"
+placeholder="Buscar manga...">
+
+<div id="mangaList"></div>
+
+<script>
+
+let mangas=[]
+
+fetch("mangas.json")
+.then(r=>r.json())
+.then(data=>{
+
+mangas=data.mangas
+render(mangas)
+
+})
+
+function render(list){
+
+const container=
+document.getElementById("mangaList")
+
+container.innerHTML=""
+
+list.forEach(m=>{
+
+const div=
+document.createElement("div")
+
+div.className="manga"
+
+div.innerText=m.title
+
+div.onclick=()=>{
+
+location=
+`chapters.html?manga=${m.folder}`
+
+}
+
+container.appendChild(div)
+
+})
+
+}
+
+document
+.getElementById("searchBox")
+.addEventListener("input",e=>{
+
+const text=
+e.target.value.toLowerCase()
+
+const filtered=
+mangas.filter(m=>
+m.title.toLowerCase()
+.includes(text)
+)
+
+render(filtered)
+
+})
+
+</script>
+
+</body>
+</html>

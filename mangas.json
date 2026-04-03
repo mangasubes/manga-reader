@@ -1,0 +1,15 @@
+{
+"mangas":[
+
+{
+"title":"Proyecto 1",
+"folder":"mangas/manga1/"
+},
+
+{
+"title":"Proyecto 2",
+"folder":"mangas/manga2/"
+}
+
+]
+}

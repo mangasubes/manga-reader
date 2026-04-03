@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>Reader</title>
+
+<style>
+
+body{
+margin:0;
+background:#000;
+color:white;
+font-family:Arial;
+overflow:hidden;
+}
+
+/* barra superior */
+
+#topbar{
+
+position:fixed;
+top:0;
+width:100%;
+
+background:#111;
+padding:6px;
+
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+
+z-index:999;
+
+}
+
+button,select{
+
+background:#222;
+color:white;
+border:none;
+padding:6px;
+cursor:pointer;
+
+}
+
+/* visor */
+
+#viewer{
+
+position:absolute;
+top:50px;
+bottom:0;
+left:0;
+right:0;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+}
+
+/* imagen */
+
+#pageImg{
+
+max-width:100%;
+max-height:100%;
+
+}
+
+/* botones invisibles */
+
+.clickZone{
+
+position:absolute;
+top:0;
+bottom:0;
+width:50%;
+
+}
+
+#leftZone{
+left:0;
+}
+
+#rightZone{
+right:0;
+}
+
+/* botón subir */
+
+#scrollTop{
+
+position:fixed;
+bottom:20px;
+right:20px;
+
+background:#333;
+padding:10px;
+
+cursor:pointer;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="topbar">
+
+<select id="chapterSelect"></select>
+
+<select id="pageSelect"></select>
+
+<button onclick="toggleScroll()">
+Scroll
+</button>
+
+<button onclick="downloadChapter()">
+Download
+</button>
+
+</div>
+
+<div id="viewer">
+
+<img id="pageImg">
+
+<div id="leftZone"
+class="clickZone"></div>
+
+<div id="rightZone"
+class="clickZone"></div>
+
+</div>
+
+<div id="scrollTop"
+onclick="window.scrollTo(0,0)">
+↑
+</div>
+
+<script>
+
+const params=
+new URLSearchParams(location.search)
+
+const folder=
+params.get("manga")
+
+const chapter=
+params.get("chapter")
+
+let pages=[]
+
+let page=1
+
+let scrollMode=false
+
+/* cargar capítulos */
+
+fetch(folder+"info.json")
+.then(r=>r.json())
+.then(data=>{
+
+const sel=
+document.getElementById(
+"chapterSelect"
+)
+
+data.chapters.forEach(ch=>{
+
+const opt=
+document.createElement("option")
+
+opt.value=ch.file
+opt.text=ch.title
+
+if(ch.file===chapter)
+opt.selected=true
+
+sel.appendChild(opt)
+
+})
+
+sel.onchange=()=>{
+
+location=
+`reader.html?manga=${folder}&chapter=${sel.value}`
+
+}
+
+})
+
+/* cargar páginas */
+
+fetch(folder+chapter)
+.then(r=>r.json())
+.then(data=>{
+
+pages=data.pages
+
+setup()
+
+})
+
+function setup(){
+
+const pageSel=
+document.getElementById("pageSelect")
+
+pages.forEach((p,i)=>{
+
+const opt=
+document.createElement("option")
+
+opt.value=i+1
+opt.text="Page "+(i+1)
+
+pageSel.appendChild(opt)
+
+})
+
+pageSel.onchange=()=>{
+
+page=parseInt(pageSel.value)
+
+showPage()
+
+savePage()
+
+}
+
+restorePage()
+
+showPage()
+
+}
+
+/* mostrar página */
+
+function showPage(){
+
+document
+.getElementById("pageImg")
+.src=pages[page-1]
+
+document
+.getElementById("pageSelect")
+.value=page
+
+preload()
+
+}
+
+/* precarga */
+
+function preload(){
+
+if(page<pages.length){
+
+const img=
+new Image()
+
+img.src=
+pages[page]
+
+}
+
+}
+
+/* navegación */
+
+function nextPage(){
+
+if(page<pages.length){
+
+page++
+
+showPage()
+savePage()
+
+}
+
+}
+
+function prevPage(){
+
+if(page>1){
+
+page--
+
+showPage()
+savePage()
+
+}
+
+}
+
+/* click zonas */
+
+document
+.getElementById("rightZone")
+.onclick=nextPage
+
+document
+.getElementById("leftZone")
+.onclick=prevPage
+
+/* teclado */
+
+document.addEventListener(
+"keydown",
+e=>{
+
+if(e.key==="ArrowRight")
+nextPage()
+
+if(e.key==="ArrowLeft")
+prevPage()
+
+})
+
+/* móvil swipe */
+
+let touchStartX=0
+
+document.addEventListener(
+"touchstart",
+e=>{
+
+touchStartX=
+e.changedTouches[0].screenX
+
+})
+
+document.addEventListener(
+"touchend",
+e=>{
+
+let touchEndX=
+e.changedTouches[0].screenX
+
+if(touchEndX<touchStartX)
+nextPage()
+
+if(touchEndX>touchStartX)
+prevPage()
+
+})
+
+/* guardar página */
+
+function savePage(){
+
+localStorage.setItem(
+folder+chapter,
+page
+)
+
+}
+
+/* restaurar */
+
+function restorePage(){
+
+const saved=
+localStorage.getItem(
+folder+chapter
+)
+
+if(saved){
+
+page=parseInt(saved)
+
+}
+
+}
+
+/* scroll mode */
+
+function toggleScroll(){
+
+scrollMode=!scrollMode
+
+if(scrollMode){
+
+window.location=
+`scroll.html?manga=${folder}&chapter=${chapter}`
+
+}
+
+}
+
+/* descarga */
+
+function downloadChapter(){
+
+pages.forEach(p=>{
+
+const a=
+document.createElement("a")
+
+a.href=p
+a.download="page"
+
+a.click()
+
+})
+
+}
+
+</script>
+
+</body>
+</html>
