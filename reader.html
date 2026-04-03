@@ -14,6 +14,8 @@ background:#000;
 color:white;
 font-family:Arial;
 
+overflow-x:hidden;
+
 }
 
 /* barra superior */
@@ -34,6 +36,8 @@ z-index:999;
 
 }
 
+/* botones */
+
 button,select{
 
 background:#222;
@@ -50,8 +54,9 @@ cursor:pointer;
 
 margin-top:50px;
 
-display:flex;
-justify-content:center;
+display:block;
+
+text-align:center;
 
 }
 
@@ -61,15 +66,13 @@ justify-content:center;
 
 display:block;
 
-width:auto;
-height:auto;
-
-/* CLAVE: tamaño real */
-
-max-width:95vw;
-max-height:95vh;
-
 margin:auto;
+
+/* CLAVE: tamaño real exacto */
+
+width:1024px;
+
+height:auto;
 
 }
 
@@ -81,9 +84,8 @@ display:block;
 
 margin:auto;
 
-max-width:1024px;
+width:1024px;
 
-width:100%;
 height:auto;
 
 margin-bottom:10px;
@@ -336,7 +338,7 @@ prevPage()
 
 })
 
-/* SCROLL VERTICAL REAL */
+/* SCROLL VERTICAL */
 
 function toggleScroll(){
 
@@ -348,8 +350,6 @@ document.getElementById("viewer")
 viewer.innerHTML=""
 
 if(scrollMode){
-
-document.body.style.overflow="auto"
 
 pages.forEach(p=>{
 
@@ -367,8 +367,6 @@ viewer.appendChild(img)
 }
 
 else{
-
-document.body.style.overflow="hidden"
 
 const img=
 document.createElement("img")
