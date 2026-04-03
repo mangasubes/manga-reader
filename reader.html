@@ -55,14 +55,38 @@ justify-content:center;
 
 }
 
-/* imagen tamaño real */
+/* imagen principal */
 
 #pageImg{
+
+display:block;
 
 width:auto;
 height:auto;
 
-max-width:2000px;
+/* CLAVE: tamaño real */
+
+max-width:95vw;
+max-height:95vh;
+
+margin:auto;
+
+}
+
+/* modo scroll */
+
+.scrollImage{
+
+display:block;
+
+margin:auto;
+
+max-width:1024px;
+
+width:100%;
+height:auto;
+
+margin-bottom:10px;
 
 }
 
@@ -163,14 +187,11 @@ fetch(folder+"info.json")
 .then(data=>{
 
 const sel=
-document.getElementById(
-"chapterSelect"
-)
+document.getElementById("chapterSelect")
 
 data.chapters.forEach(ch=>{
 
-const opt=
-document.createElement("option")
+const opt=document.createElement("option")
 
 opt.value=ch.file
 opt.text=ch.title
@@ -210,8 +231,7 @@ document.getElementById("pageSelect")
 
 pages.forEach((p,i)=>{
 
-const opt=
-document.createElement("option")
+const opt=document.createElement("option")
 
 opt.value=i+1
 opt.text="Page "+(i+1)
@@ -252,14 +272,13 @@ preload()
 
 }
 
-/* precargar siguiente */
+/* precarga */
 
 function preload(){
 
 if(page<pages.length){
 
-const img=
-new Image()
+const img=new Image()
 
 img.src=pages[page]
 
@@ -293,7 +312,7 @@ savePage()
 
 }
 
-/* zonas click */
+/* click navegación */
 
 document
 .getElementById("rightZone")
@@ -317,18 +336,20 @@ prevPage()
 
 })
 
-/* scroll real */
+/* SCROLL VERTICAL REAL */
 
 function toggleScroll(){
 
 scrollMode=!scrollMode
 
-if(scrollMode){
-
 const viewer=
 document.getElementById("viewer")
 
 viewer.innerHTML=""
+
+if(scrollMode){
+
+document.body.style.overflow="auto"
 
 pages.forEach(p=>{
 
@@ -337,9 +358,7 @@ document.createElement("img")
 
 img.src=p
 
-img.style.maxWidth="2000px"
-
-img.style.display="block"
+img.className="scrollImage"
 
 viewer.appendChild(img)
 
@@ -349,24 +368,35 @@ viewer.appendChild(img)
 
 else{
 
-location.reload()
+document.body.style.overflow="hidden"
+
+const img=
+document.createElement("img")
+
+img.id="pageImg"
+
+viewer.appendChild(img)
+
+showPage()
 
 }
 
 }
 
-/* botón subir */
+/* subir */
 
 function scrollTopPage(){
 
 window.scrollTo({
+
 top:0,
 behavior:"smooth"
+
 })
 
 }
 
-/* guardar página */
+/* guardar */
 
 function savePage(){
 
@@ -394,14 +424,13 @@ page=parseInt(saved)
 
 }
 
-/* descarga real */
+/* descarga */
 
 function downloadChapter(){
 
 pages.forEach(p=>{
 
-const link=
-document.createElement("a")
+const link=document.createElement("a")
 
 link.href=p
 
